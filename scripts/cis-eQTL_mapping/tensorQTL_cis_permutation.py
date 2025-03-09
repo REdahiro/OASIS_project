@@ -51,7 +51,7 @@ path = f'{base_path}{l1_cluster}/{cluster_resolution}/'
 chr_list = ['chr1','chr2','chr3','chr4','chr5','chr6','chr7','chr8','chr9','chr10',
 	        'chr11','chr12','chr13','chr14','chr15','chr16','chr17','chr18','chr19','chr20',
             'chr21','chr22']
-KF_ID = {'SG_XXXX'}           # sample ID removed from chrX analysis
+KF_ID = {'SG_XXXXX'}           # sample ID removed from chrX analysis
 
 #--------------------------------------------------#
 #          eQTL mapping: permutation               #
@@ -65,9 +65,9 @@ for i in target_cluster:
     phenotype_bed_file = f'{path}BED/{i}_Gene.1_Cell.10_Input_no.flip_ALL.bed.gz'
     covariates_file = f'{path}Covariates/{i}_Gene.1_Cell.10_no.flip_Cov.txt'             
     phenotype_df, phenotype_pos_df = tensorqtl.read_phenotype_bed(phenotype_bed_file)
-    covariates_df = pd.read_csv(covariates_file, sep='\t', index_col=0).T                # samples x covariates
-    if len(covariates_df.index.intersection(KF_ID)) == 1 :                               # dimension fixed for phenotype of chrX
-        covariates_df_X = covariates_df.drop('SG_XXXX', axis=0)
+    covariates_df = pd.read_csv(covariates_file, sep='\t', index_col=0).T
+    if len(covariates_df.index.intersection(KF_ID)) == 1 :
+        covariates_df_X = covariates_df.drop('SG_XXXXX', axis=0)
     else :
         covariates_df_X = covariates_df                  
 
@@ -106,7 +106,7 @@ for i in target_cluster:
 
     phenotype_df_X = phenotype_df.loc[phenotype_pos_df['chr'].isin(['chrX']),:]
     if len(covariates_df.index.intersection(KF_ID)) == 1 :                        
-        phenotype_df_X = phenotype_df_X.drop('SG_CO_OK_00057', axis=1)
+        phenotype_df_X = phenotype_df_X.drop('SG_XXXXX', axis=1)
     else :
         phenotype_df_X = phenotype_df_X        
     phenotype_pos_df_X = phenotype_pos_df.loc[phenotype_pos_df['chr'].isin(["chrX"]),:]
