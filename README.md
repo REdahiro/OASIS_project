@@ -1,4 +1,4 @@
-# Multi-omics immune cell atlas, OASIS, project
+# Single-cell immune cell atlas with multi-layer omics data in Japanese
 
 ## Overview
 We constructed multi-omics immune cell atlas, <ins>**O**</ins>saka <ins>**A**</ins>tla<ins>**s**</ins> of <ins>**I**</ins>mmune Cell<ins>**s**</ins> (OASIS), from 235 Japanese including COVID-19 patients and healthy subjects. The 5’ single-cell transcriptomics data profiled over 1,500,000 peripheral blood mononuclear cells (PBMCs). OASIS links these single-cell transcriptomics data with host genetics, plasma proteomics, and metagenomics data.\
