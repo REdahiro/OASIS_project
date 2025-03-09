@@ -1,10 +1,11 @@
-# Multi-omics immune cell atlas, Osaka Atlas of Immune Cells (OASIS), from 235 Japanese including COVID-19 patients and healthy subjects.
-
+# Multi-omics immune cell atlas, Osaka Atlas of Immune Cells (OASIS), from 235 Japanese
 
 ## Overview
-This repository provides code used for single-cell transcriptome and T/B cell receptor analyses of > 895,000 peripheral blood mononuclear cells from 73 COVID-19 patients and 75 healthy controls of Japanese with host genetics data.
+This repository provides code used for single-cell eQTL mapping, colocalization analysis, PRS analysis, and single-cell deconvolution of various somatic mutations in OASIS paper.
 
-Edahiro R, Shirai Y, et al, "Single-cell analyses and host genetics highlight the role of innate immune cells in COVID-19 severity", Nature Genetics in press. 
+![OverView](https://github.com/user-attachments/assets/92d898a9-1bdd-4643-935f-dda6fd3b4a72)
+
+Edahiro R, Sato G, et al, "Deciphering state-dependent immune features from multi-layer omics data at single-cell resolution", Nature Genetics in press. 
 
 ## Data availability
 
