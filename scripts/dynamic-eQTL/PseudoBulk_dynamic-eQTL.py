@@ -6,7 +6,7 @@
 #
 # dir: /work22/home/redahiro/analysis/OASIS/sceQTL/reQTL
 # env: Seurat4.2
-# date: 2023.09.22 (editting the part of eSNP_results) → 2024.02.12 (Sex added as covariates)
+# date: 2024.02.12
 #---------------------------------------------------------------------------------------------------------------------------#
 
 # Load libraries
@@ -15,7 +15,6 @@ library(Matrix)
 library(data.table)
 library(tidyverse)
 library(optparse)
-# library(qvalue)
 
 options(stringsAsFactors=F)
 
@@ -33,7 +32,6 @@ cluster <- opt$cluster
 module <- opt$module                 
 num_cate <- opt$num_cate
 
-
 path = "/work22/home/redahiro/analysis/OASIS/sceQTL/reQTL/PseudoBulk/"
 
 ##------------------------------##
@@ -41,7 +39,6 @@ path = "/work22/home/redahiro/analysis/OASIS/sceQTL/reQTL/PseudoBulk/"
 ##------------------------------##
 
 ###--- eGene & eSNP paris ---#
-
 # autosomal
 eGene_SNP <- read_delim(paste0(path,"tensorQTL/",cluster,"/",module,"/eSNP/",module,"_Cate.",num_cate,"_eSNP_results.txt"),"\t",col_names=T) %>%
                mutate(variant_id_2 = variant_id) %>%
@@ -56,7 +53,6 @@ eGene_SNP_chrX <- read_delim(paste0(path,"tensorQTL/",cluster,"/",module,"/eSNP/
                filter(CHR == "chrX") %>% select(gene, variant_id)
 eGene_chrX_list <- unique(eGene_SNP_chrX$gene)
 
-
 ###--- Covariates ---###
 # Base phenotype
 pheno_base <- read_csv("/work22/home/redahiro/analysis/OASIS/phenotype/Phenotype_COV.info_OASIS_eQTL_cov88_hc146.csv") %>%
@@ -65,7 +61,6 @@ pheno_base <- read_csv("/work22/home/redahiro/analysis/OASIS/phenotype/Phenotype
 # PC DNA
 PC_g <- read_csv("/work22/home/redahiro/analysis/OASIS/phenotype/PCA_genotype_ASA_ALL_cov88_hc148.csv") %>% select(SG_ID,PC1_g,PC2_g)
 
-
 # PC RNA (Sample * Categories)
 PC_r <- read_delim(paste0(path,"Input/",cluster,"/",module,"_Cate.",num_cate,"_Gene.1_Cell.10_qtlInput.Pcs.txt"), "\t", col_names=T) %>%
             mutate(Cate_ID = ...1,
@@ -73,12 +68,9 @@ PC_r <- read_delim(paste0(path,"Input/",cluster,"/",module,"_Cate.",num_cate,"_G
                    SG_ID = str_sub(Cate_ID, start=-14,end=-1)) %>%
             select(-Cate_ID) %>%
             select(SG_ID,Cate,PC1:PC15)
-
 # Merge
 pheno <- pheno_base %>% left_join(PC_g, by="SG_ID") %>% left_join(PC_r, by= "SG_ID") %>% 
            mutate_at(vars(Cate),as.numeric) %>% mutate(Cate2 = Cate*Cate) %>% select(SG_ID,Cate,Cate2,everything())
-
-
 
 ###--- Pseudo-bulk expression matrix (Sample * Categories) ---###
 
@@ -97,7 +89,6 @@ exp_chrX <- read_delim(paste0(path,"Input/",cluster,"/",module,"_Cate.",num_cate
                    SG_ID = str_sub(Cate_ID, start=-14,end=-1)) %>%
             select(-Cate_ID) %>%
             select(SG_ID,Cate,eGene_chrX_list) %>% mutate_at(vars(Cate),as.numeric)
-
 
 ###--- load vcf files ---###
 
@@ -120,10 +111,8 @@ colnames(geno_chrX) <- c("variant_id",colnames_geno_chrX[2:length(colnames_geno_
 geno_chrX <- geno_chrX %>% column_to_rownames("variant_id") %>% t() %>% 
                  as.data.frame() %>% rownames_to_column("SG_ID") %>% as_tibble 
 
-
-
 #####--------------------------------------------------#####
-#####            response-eQTL analysis                #####
+#####            dynamic-eQTL analysis                 #####
 #####--------------------------------------------------#####
 
 ###  autosomal
@@ -165,10 +154,8 @@ for(i in c(1:dim(eGene_SNP)[1])){
     out <- data.frame(gene=GENE,snp=SNP,lrt_pval=model_lrt$`Pr(>Chisq)`[2],
                              B_g=coef_fit0[2,1],SE_g=coef_fit0[2,2], T_g=coef_fit0[2,3],
                              B_c=coef_fit0[3,1],SE_c=coef_fit0[3,2], T_c=coef_fit0[3,3],
-                             B_gc=coef_fit1[25,1],SE_gc=coef_fit1[25,2], T_gc=coef_fit1[25,3])
-    
+                             B_gc=coef_fit1[25,1],SE_gc=coef_fit1[25,2], T_gc=coef_fit1[25,3])   
     out_summary[[paste0(GENE,"-",SNP)]] <- out
-
 
     ###--- qurdratic mixed model ---###
     # Fit null model
@@ -183,13 +170,11 @@ for(i in c(1:dim(eGene_SNP)[1])){
     out.q <- data.frame(gene=GENE,snp=SNP,lrt_pval=model_lrt.q$`Pr(>Chisq)`[2])
     
     out_summary.q[[paste0(GENE,"-",SNP)]] <- out.q
-
   }
 
 # summarize list
 summary_auto <- do.call(rbind,out_summary) %>% as_tibble %>% arrange(lrt_pval)
 summary.q_auto <- do.call(rbind,out_summary.q) %>% as_tibble %>% arrange(lrt_pval)
-
 
 ###---  chrX ---###
 rm(out_summary)
@@ -239,7 +224,6 @@ for(i in c(1:dim(eGene_SNP_chrX)[1])){
     
     out_summary[[paste0(GENE,"-",SNP)]] <- out
 
-
     ###--- qurdratic mixed model ---###
     # Fit null model
     fit.q0 <- lmer(formula=paste0("E ~ G + Cate + Cate2 + Status + Age + Sex + Version + PC1_g + PC2_g +", paste0("PC", 1:15, collapse = " + "), 
@@ -253,25 +237,22 @@ for(i in c(1:dim(eGene_SNP_chrX)[1])){
     out.q <- data.frame(gene=GENE,snp=SNP,lrt_pval=model_lrt.q$`Pr(>Chisq)`[2])
     
     out_summary.q[[paste0(GENE,"-",SNP)]] <- out.q
-
   }
 
 # summarize list
 summary_chrX <- do.call(rbind,out_summary) %>% as_tibble %>% arrange(lrt_pval)
 summary.q_chrX <- do.call(rbind,out_summary.q) %>% as_tibble %>% arrange(lrt_pval)
 
-
-
 ### Making outputdata 
 summary_linear <- rbind(summary_auto, summary_chrX) %>%
-                      distinct(gene, .keep_all=TRUE) %>%          # first coming data retained
+                      distinct(gene, .keep_all=TRUE) %>%
                       mutate(FDR=p.adjust(lrt_pval, method= "BH")) %>%
                       select(gene,snp,FDR,lrt_pval,everything())
 
 write.table(summary_linear, paste0(path,"tensorQTL/",cluster,"/",module,"/Results/summary_linear_",module,"_Cate.",num_cate,"_update.txt"), quote=F, sep="\t", row.names=F, col.names=T)
 
 summary_quadratic <- rbind(summary.q_auto, summary.q_chrX) %>%
-                      distinct(gene, .keep_all=TRUE) %>%          # first coming data retained
+                      distinct(gene, .keep_all=TRUE) %>%
                       mutate(FDR=p.adjust(lrt_pval, method= "BH")) %>%
                       select(gene,snp,FDR,lrt_pval,everything())
 
