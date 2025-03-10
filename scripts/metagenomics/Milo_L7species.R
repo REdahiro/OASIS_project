@@ -95,3 +95,25 @@ nh_graph_pl <- plotNhoodGraphDA(milo, da_results, layout="UMAP",alpha=1)     # a
 
 ggsave(file = paste0("./Milo/Milo_",cov,"_noFDR.png"), plot = nh_graph_pl, width = 8.5, height = 7.5, dpi = 300)
 
+##-----------------------------------------##
+##         downstream analysis             ##
+##-----------------------------------------##
+
+#-- Assign a cell type label to each neighbourhood
+da_results <- annotateNhoods(milo, da_results, coldata_col = "l3") 
+
+# making order
+l3_cluster <- c("CD4_Naive","CD4_TCM","CD4_TEM","CD4_CTL","Treg",
+                "CD8_Naive","CD8_TCM","CD8_TEM","CD8_CTL","MAIT","gdT","Pro_T",
+                "NK_CD56dim","NK_cytokine","NK_HLA","NK_CD56bright",
+                "B_Naive1","B_Naive2","B_Intermediate","B_Memory","B_Activated","PB",
+                "cMono_S100A","cMono_IL1B","intMono","ncMono","cDC","pDC")
+da_results$l3 <- factor(da_results$l3, levels=rev(l3_cluster))
+
+# Export DA results
+write.csv(da_results,paste0("./Milo/DA_results_",i,".csv"),row.names=F)
+
+# https://github.com/MarioniLab/miloR/issues/181
+p.DA_celltype = plotDAbeeswarm(da_results, group.by = "l3", alpha=1)   # if png dont work, setting alpha
+ggsave(file = paste0("./Milo/BeeswarmPlot_DA_",i,"_noFDR_withMix.pdf"), plot = p.DA_celltype, width = 6, height = 11, dpi = 300)
+
