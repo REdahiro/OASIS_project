@@ -15,7 +15,6 @@ library(Matrix)
 library(data.table)
 library(tidyverse)
 library(optparse)
-# library(qvalue)
 
 options(stringsAsFactors=F)
 
@@ -42,7 +41,6 @@ path = "/work22/home/redahiro/analysis/OASIS/sceQTL/reQTL/"
 ##        Import data           ##
 ##------------------------------##
 
-
 ###--- load vcf files ---###
 
 # chrX: exclude autosomal
@@ -53,7 +51,6 @@ colnames(geno_chrX) <- c("variant_id",colnames_geno_chrX[2:length(colnames_geno_
 
 geno_chrX <- geno_chrX %>% column_to_rownames("variant_id") %>% t() %>% 
                  as.data.frame() %>% rownames_to_column("SG_ID") %>% as_tibble 
-
 
 ###--- eGene & eSNP paris ---#
 eGene_SNP <- read_delim(paste0(path,"PseudoBulk/tensorQTL/",cluster,"/",module,"/Results/summary_",test,"_",module,"_Cate.",num_cate,".txt"),"\t",col_names=T) %>%
@@ -88,7 +85,6 @@ cov <- cell_state_info %>%
 
 ###--- Expression ---###
 exp <- read_delim(paste0(path,"SingleCell/Data/",cluster,"_",module,"_UMIdata_update.tsv.gz"), "\t", col_names=T)
-
 
 #####--------------------------------------------------#####
 #####         NB single-cell eQTL analysis             #####
