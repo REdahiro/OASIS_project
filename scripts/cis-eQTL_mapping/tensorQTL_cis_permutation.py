@@ -49,7 +49,7 @@ path = f'{base_path}{l1_cluster}/{cluster_resolution}/'
 
 # chr list: only autosomal
 chr_list = ['chr1','chr2','chr3','chr4','chr5','chr6','chr7','chr8','chr9','chr10',
-	        'chr11','chr12','chr13','chr14','chr15','chr16','chr17','chr18','chr19','chr20',
+	    'chr11','chr12','chr13','chr14','chr15','chr16','chr17','chr18','chr19','chr20',
             'chr21','chr22']
 KF_ID = {'SG_XXXXX'}           # sample ID removed from chrX analysis
 
@@ -71,8 +71,7 @@ for i in target_cluster:
     else :
         covariates_df_X = covariates_df                  
 
-
-	##--- Genotypeds ---##
+   ##--- Genotypeds ---##
 
     # Autosomal
     plink_prefix_path = '/work22/home/redahiro/analysis/OASIS/WGS/WGS_202308/plink/Merged_Auto_WGS_202308'
@@ -81,13 +80,13 @@ for i in target_cluster:
     plink_prefix_path_X = '/work22/home/redahiro/analysis/OASIS/WGS/WGS_202308/plink/X_nonPAR.S4phased'
     pr_X = genotypeio.PlinkReader(plink_prefix_path_X)
 
-	## load genotypes and variants into data frames
+    ## load genotypes and variants into data frames
     genotype_df = pr.load_genotypes()
     variant_df = pr.bim.set_index('snp')[['chrom', 'pos']]
     genotype_df_X = pr_X.load_genotypes()
     variant_df_X = pr_X.bim.set_index('snp')[['chrom', 'pos']]
 
-	##--- covariate setting ---##
+    ##--- covariate setting ---##
     cov_list = ('Status','Age','Sex','Version','PC1_g','PC2_g',
                 'PC1_r','PC2_r','PC3_r','PC4_r','PC5_r','PC6_r','PC7_r','PC8_r','PC9_r','PC10_r',
                 'PC11_r','PC12_r','PC13_r','PC14_r','PC15_r','PC16_r','PC17_r','PC18_r','PC19_r','PC20_r',
@@ -143,7 +142,7 @@ for i in target_cluster:
     cis_all = cis_all.reindex(columns=['phenotype_id','gene','variant_id','tss_distance','qval','pval_nominal','slope','slope_se','af',
 	                                 'pval_beta','pval_perm','pval_nominal_threshold','num_var','beta_shape1','beta_shape2','true_df','pval_true_df','ma_samples','ma_count'])
 
-	# export
+    # export
     cis_all.to_csv(f'{path}{prefix}_Cell.10_top_assoc_chr1_23.txt.gz', sep='\t', index=False, compression = "gzip")
     eGene_df.to_csv(f'{path}{prefix}_Cell.10_eGene_number_chr1_23.txt', sep='\t', index=False)
 
