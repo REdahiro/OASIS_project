@@ -62,7 +62,7 @@ for i in target_cluster:
 
     print("starting {0}, {1}".format(i, tm.ctime()))
     
-	##--- Phenotype & Covariates ---##
+    ##--- Phenotype & Covariates ---##
     phenotype_bed_file = f'{path}BED/{i}_Gene.1_Cell.10_Input_no.flip_ALL.bed.gz'
     covariates_file =  f'{path}Covariates/{i}_Gene.1_Cell.10_no.flip_Cov.txt'
     phenotype_df, phenotype_pos_df = tensorqtl.read_phenotype_bed(phenotype_bed_file)
@@ -72,7 +72,7 @@ for i in target_cluster:
     else :
         covariates_df_X = covariates_df                  
 
-	##--- Genotypeds ---##
+    ##--- Genotypeds ---##
     plink_prefix_path = '/work22/home/redahiro/analysis/OASIS/WGS/WGS_202308/plink/Merged_Auto_WGS_202308'
     pr = genotypeio.PlinkReader(plink_prefix_path)
     # Chr X
@@ -85,7 +85,7 @@ for i in target_cluster:
     genotype_df_X = pr_X.load_genotypes()
     variant_df_X = pr_X.bim.set_index('snp')[['chrom', 'pos']]
 
-	##--- covariate setting ---##
+    ##--- covariate setting ---##
     cov_list = ('Status','Age','Sex','Version','PC1_g','PC2_g',
                 'PC1_r','PC2_r','PC3_r','PC4_r','PC5_r','PC6_r','PC7_r','PC8_r','PC9_r','PC10_r',
                 'PC11_r','PC12_r','PC13_r','PC14_r','PC15_r','PC16_r','PC17_r','PC18_r','PC19_r','PC20_r',
